@@ -1,33 +1,37 @@
 import os
 import cv2
-import glob
+import numpy as np
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.utils import to_categorical
 
+def load_data(base_path, categories, img_size=128):
+    data = []
+    labels = []
 
+    for idx, category in enumerate(categories):
+        category_path = os.path.join(base_path, category)
 
-def extract_images(directory, img_size=128, extension='.jpg'):
-    images_list = []
-    ending_extension = '.jpg'
+        if not os.path.isdir(category_path):
+            print(f"⚠️ Skipping: {category_path} is not a valid directory.")
+            continue
 
-    for filename in glob.glob(os.path.join(directory, "*")):
-        if filename.lower().endswith(extension):
+        print(f"✅ Reading images from: {category_path}")
+
+        for img_name in os.listdir(category_path):
+            img_path = os.path.join(category_path, img_name)
+            if not img_path.lower().endswith(('.png', '.jpg', '.jpeg')):
+                continue
             try:
-                image = cv2.imread(filename)
-                image = cv2.resize((image, (img_size, img_size)))
-                images_list.append(image)
+                img = cv2.imread(img_path)
+                img = cv2.resize(img, (img_size, img_size))
+                data.append(img)
+                labels.append(idx)
             except Exception as e:
-                print(f"Error processing {filename}: {e}")
-    return images_list
+                print(f"⚠️ Error with image {img_path}: {e}")
 
-glioma_directory = 'Users/usmanchaudhry/PycharmProjects/Projects/MRI Scans/Training/glioma'
-meningioma_directory = 'Users/usmanchaudhry/PycharmProjects/Projects/MRI Scans/Training/meningioma'
-no_tumor_directory = 'Users/usmanchaudhry/PycharmProjects/Projects/MRI Scans/Training/notumor'
-pituitary_directory = 'Users/usmanchaudhry/PycharmProjects/Projects/MRI Scans/Training/pituitary'
+    X = np.array(data, dtype='float32') / 255.0  # Normalize
+    y = to_categorical(labels, num_classes=len(categories))  # One-hot encoding
 
-glioma_images=extract_images(glioma_directory)
-meningioma_images=extract_images(meningioma_directory)
-no_tumor_images=extract_images(no_tumor_directory)
-pituitary_images=extract_images(pituitary_directory)
-
-images_directory={"glioma":glioma_images,"meningioma":meningioma_images,"no tumor":no_tumor_images,"pituitary":pituitary_images}
+    return train_test_split(X, y, test_size=0.2, random_state=42)
 
 

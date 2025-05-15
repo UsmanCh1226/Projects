@@ -7,6 +7,13 @@ from keras.src.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlatea
 from cnn_model_builder import build_model
 from loading_data import loading_data
 from logs import get_logger
+import os
+
+BASE_DIR = os.path.dirname(__file__)
+
+
+def rel_path(*parts):
+    return os.path.join(BASE_DIR, *parts)
 
 logger = get_logger(__name__)
 
@@ -37,13 +44,11 @@ def main():
         class_weights_dict = dict(enumerate(class_weights))
 
         # Callbacks
-        checkpoint = ModelCheckpoint(
-            'checkpoints/best_weights.h5',
-            save_best_only=True,
-            save_weights_only=True,
-            monitor='val_loss',
-            mode='min'
-        )
+        checkpoint_path = rel_path('..', 'checkpoints', 'best_weights.h5')
+        os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+        checkpoint = ModelCheckpoint(checkpoint_path, ...)
+
+
         early_stopping = EarlyStopping(
             monitor='val_loss',
             patience=10,
@@ -66,11 +71,14 @@ def main():
             verbose=1
         )
 
-        # Save final weights and training history
-        model.save_weights('brain_tumor_model.weights.h5')
+        weights_path = rel_path('..', 'models', 'brain_tumor_model.weights.h5')
+        os.makedirs(os.path.dirname(weights_path), exist_ok=True)
+        model.save_weights(weights_path)
         logger.info("Model training complete and weights saved.")
 
-        with open('training_history.pkl', 'wb') as f:
+        history_path = rel_path('..', 'artifacts', 'training_history.pkl')
+        os.makedirs(os.path.dirname(history_path), exist_ok=True)
+        with open(history_path, 'wb') as f:
             pickle.dump(history.history, f)
         logger.info("Training history saved.")
 

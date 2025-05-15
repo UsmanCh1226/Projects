@@ -1,7 +1,7 @@
 @@ -0,0 +1,59 @@
 # 🧠 MRI Brain Tumor Classification with Deep Learning
 
-![screenshot](screenshots/graph.png)
+![Model Graph](CNN_Image_Classifier_Graph.png)
 
 ## 📋 Overview
 

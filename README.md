@@ -1,7 +1,6 @@
 @@ -0,0 +1,59 @@
 # 🧠 MRI Brain Tumor Classification with Deep Learning
 
-![Model Graph](CNN_Image_Classifier_Graph.png)
 
 ## 📋 Overview
 
@@ -53,6 +52,15 @@ The goal was to build a robust model capable of learning from image data and mak
 - Optimize deployment with Docker or Heroku  
 - Integrate proper unit tests and CI/CD pipeline  
 - Fix Git LFS limitations by using external storage or reducing model size  
+
+- You can download the model file [here](https://drive.google.com/uc?export=download&id=1lubC8EsCkQrDKRrHGIjqSNc-ws2I-By2).
+
+
+
+
+
+
+
 
 ---
 
